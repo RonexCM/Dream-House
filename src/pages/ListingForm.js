@@ -156,7 +156,7 @@ const ListingForm = () => {
     !formDataCopy.offer && delete formDataCopy.discountedPrice
     const docRef = await addDoc(collection(db,"listings"),formDataCopy)
     toast.success("Listing Created")
-    navigate(`/categoryName/${formDataCopy.type}/${docRef.id}`)
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   };
 
   return (
@@ -227,13 +227,13 @@ const ListingForm = () => {
           </div>
           {/* bathrooms */}
           <div className="mb-3 mt-4">
-          <label htmlFor="bedrooms" className="form-label">
-              Bedrooms
+          <label htmlFor="bathrooms" className="form-label">
+              Bathrooms
             </label>
             <input
               type="number"
               className="form-control"
-              id="bedrooms"
+              id="bathrooms"
               value={bathrooms}
               onChange={onChangeHandler}
               required
