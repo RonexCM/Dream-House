@@ -1,6 +1,6 @@
 import React,{useState, useEffect, useRef} from 'react'
 import Layout from '../components/Layout/Layout'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {getAuth, onAuthStateChanged} from 'firebase/auth'
 import Spinner from '../components/Spinner'
 import { AiOutlineFileAdd } from "react-icons/ai"
@@ -8,11 +8,12 @@ import {toast} from 'react-toastify'
 import {getStorage,ref,uploadBytesResumable,getDownloadURL} from 'firebase/storage'
 import { db } from '../firebase.config'
 import { v4 as uuidv4 } from "uuid";
-import {addDoc,collection,serverTimestamp} from 'firebase/firestore'
-// used ListingForm instead of CreateListing
-const ListingForm = () => {
+import {addDoc,collection,serverTimestamp,doc, updateDoc, getDoc} from 'firebase/firestore'
+
+const EditListing = () => {
     const [loading, setLoading] = useState(false)
-    const [geoLocationEnable, setGeoLocationEnable] = useState(false)
+    const[listing,setListing] = useState(null)
+    const params = useParams()
     const [formData, setFormData] = useState({
         type : 'rent',
         name : '',
@@ -63,6 +64,32 @@ const ListingForm = () => {
         // eslint-disable-next-line
     }, [])
 
+    //useEffect to check login user
+    useEffect(()=> {
+        if(listing && listing.useRef !== auth.currentUser.uid){
+            toast.error("You cannot edit this property")
+            navigate("/")
+        }
+         // eslint-disable-next-line
+    },[])
+    useEffect(() => {
+        setLoading(true)
+        const fetchListing = async() => {
+            const docRef = doc(db,"listings", params.listingId)
+            const docSnap = await getDoc(docRef)
+            if(docSnap.exists()){
+                setListing(docSnap.data())
+                setFormData({...docSnap.data()})
+                setLoading(false)
+            }
+            else{
+                navigate("/")
+                toast.error("Listing Not exists")
+            }
+        }
+        fetchListing()
+    },[])
+
     if (loading) {
         return <Spinner/>
     }
@@ -94,8 +121,9 @@ const ListingForm = () => {
 //4.00.00
    //form submit
    const onSubmit = async(e) => {
+    setLoading(true)
     e.preventDefault();
-    console.log(formData);
+    //console.log(formData);
     if(discountedPrice >= regularPrice){
       setLoading(false)
       toast.error('Discount should be less than regular price')
@@ -154,8 +182,9 @@ const ListingForm = () => {
     const formDataCopy = {...formData,imgUrls, timestamp: serverTimestamp()}
     delete formDataCopy.images
     !formDataCopy.offer && delete formDataCopy.discountedPrice
-    const docRef = await addDoc(collection(db,"listings"),formDataCopy)
-    toast.success("Listing Created")
+    const docRef = doc(db, "listings", params.listingId)
+    await updateDoc(docRef, formDataCopy)
+    toast.success("Listing Updated")
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   };
 
@@ -163,7 +192,7 @@ const ListingForm = () => {
     <Layout>
     <div className="container d-flex flex-column align-items-center justify-content-center mb-4">
         <h3 className="mt-3 w-50 bg-dark text-light p-2 text-center">
-            Create Listing &nbsp;
+            Edit Your Listing &nbsp;
             <AiOutlineFileAdd />
         </h3>
         {/* Sell rent button */}
@@ -443,10 +472,9 @@ const ListingForm = () => {
           {/* submit button */}
           <div className="mb-3">
             <input
-              disabled={!name || !address || !regularPrice || !images}
               className="btn btn-primary w-100"
               type="submit"
-              value="Create Listing"
+              value="Update Listing"
             />
           </div>
         </form>
@@ -455,4 +483,5 @@ const ListingForm = () => {
   )
 }
 
-export default ListingForm
+export default EditListing
+

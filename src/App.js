@@ -13,6 +13,7 @@ import Category from './pages/Category';
 import ListingForm from './pages/ListingForm';
 import Listing from './pages/Listing';
 import Contact from './pages/Contact';
+import EditListing from './pages/EditListing';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
         </Route>
         <Route path="/signup" element={<Signup/>}/>
+        <Route path="/editlisting/:listingId" element={<EditListing/>}/>
         <Route path="/contact/:landlordId" element={<Contact/>}/>
         <Route path="/forgot-password" element={<ForgotPassword/>}/>
         <Route path="/create-listing" element={<ListingForm/>}/>

@@ -5,6 +5,13 @@ import { db } from '../firebase.config'
 import { getAuth } from 'firebase/auth'
 import { useNavigate, Link, useParams } from 'react-router-dom'
 import Spinner from '../components/Spinner'
+import SwipeCore,{EffectCoverflow,Navigation,Pagination} from 'swiper'
+import {Swiper,SwiperSlide} from 'swiper/react'
+import "swiper/swiper-bundle.min.css";
+import "swiper/swiper.min.css";
+
+//config
+SwipeCore.use([EffectCoverflow])
 
 const Listing = () => {
    const [listing,setListing] = useState("")
@@ -34,8 +41,42 @@ const Listing = () => {
     <Layout>
     <div className="container d-flex align-items-center justify-content-center mt-4">
      <div className="card" style={{ width: "600px" }}>
+     {/* <div className="card-header">
+        {listing.imgUrls === undefined ? (<Spinner/>) : (
+            <Swiper
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={1}
+            coverflowEffect={{
+                rotate: 50,
+                stretch: 0,
+                depth: 100,
+                modifier: 1,
+                slideShadows: true
+            }}
+            className="mySwiper"
+            >
+                {listing.imgUrls.map((url,index) => (
+                    <SwiperSlide key={index}>
+                        <img src={listing.imgUrls[index]}
+                        height={400}
+                        width={800}
+                        alt={listing.name}
+                        />
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+        )}
+     </div> */}
+     <div className="card-header">
+     <img src={listing.imgUrls} 
+        className="img-thumbnail"
+        alt={listing.name} height={400} width={800}/>
+     </div>
       <div className="card-body">
         <h3>{listing.name}</h3>
+        <h3>Location : {listing.address}</h3>
         <h6>
             Price : RS { " "}
             {listing.offer ? listing.discountedPrice : listing.regularPrice}

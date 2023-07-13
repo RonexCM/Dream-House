@@ -2,11 +2,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import {FaBath, FaBed} from 'react-icons/fa'
 
-const ListingItem = ({listing, id}) => {
+const ListingItem = ({listing, id, onDelete, onEdit}) => {
   return (
     <>
     <div className="d-flex align-items-center justify-content-center">
-      <div className="card category-link" style={{width: "800px"}}>
+      <div className="card category-link mb-4" style={{width: "800px"}}>
       <Link to={`/category/${listing.type}/${id}`}>
         <div className="row container p-2">
             <div className="col-md-5">
@@ -15,8 +15,8 @@ const ListingItem = ({listing, id}) => {
                 alt={listing.name} height={200} width={300}/>
             </div>
             <div className="col-md-5">
-                <p>{listing.location}</p>
                 <h4>{listing.name}</h4>
+                <p>Location: {listing.address}</p>
                 <p>
                     RS: {" "}
                     {
@@ -37,6 +37,22 @@ const ListingItem = ({listing, id}) => {
                     ? `${listing.bathrooms} Bathrooms`
                     : "1 Bathroom"}
                 </p>
+                {onDelete && (
+                  <button className="btn btn-danger" 
+                  onClick={() => {
+                    onDelete(listing.id, listing.name)
+                  }}>
+                  Delete Listing
+                  </button>
+                )}
+                {onEdit && (
+                  <button className="btn btn-info ms-3" 
+                  onClick={() => {
+                    onEdit(listing.id, listing.name)
+                  }}>
+                  Edit Listing
+                  </button>
+                )}
             </div>
         </div>
         </Link>
